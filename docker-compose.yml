@@ -2,14 +2,14 @@ services:
   keycloak:
     image: quay.io/keycloak/keycloak:26.0.5
     env_file: .env
-    # ports:
-      # - 8099:8080
+    expose:
+      - 8080
     labels:
       - traefik.enable=true
       - traefik.docker.network=frontend
       - traefik.http.routers.keycloak.tls.certresolver=myresolver
       - traefik.http.routers.keycloak.rule=Host(`$DOMAIN`)
-      # - traefik.http.services.keycloak.loadbalancer.server.port=8080
+      - traefik.http.services.keycloak.loadbalancer.server.port=8080
     networks:
       - frontend
     command: start-dev
