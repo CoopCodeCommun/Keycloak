@@ -2,8 +2,8 @@ services:
   keycloak:
     image: quay.io/keycloak/keycloak:26.0.5
     env_file: .env
-    expose:
-      - 8080
+    # ports:
+      # - 8089:8080
     labels:
       - traefik.enable=true
       - traefik.docker.network=frontend
