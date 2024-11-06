@@ -8,7 +8,7 @@ services:
       - traefik.enable=true
       - traefik.docker.network=frontend
       - traefik.http.routers.keycloak.tls.certresolver=myresolver
-      - traefik.http.routers.keycloak.rule=Host(`keycloack.miete.codecommun.co`)
+      - traefik.http.routers.keycloak.rule=Host(`$DOMAIN`)
       - traefik.http.services.keycloak.loadbalancer.server.port=8080
     networks:
       - frontend
