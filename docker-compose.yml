@@ -25,7 +25,6 @@ services:
       KC_HOSTNAME: "${VIRTUAL_HOST}"
       KC_PROXY: "edge"
       KC_HOSTNAME_ADMIN_URL: "https://${VIRTUAL_HOST}"
-      QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: true
       KC_DB_URL_HOST: kc-v23-db
       #KC_DB_SCHEMA: public
       KC_DB_USERNAME: ${POSTGRESQL_USER}
