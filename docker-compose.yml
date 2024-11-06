@@ -33,7 +33,7 @@ services:
       KC_DB: postgres
       KC_DB_URL_DATABASE: ${POSTGRESQL_DB}
 
-    command: start-dev
+    # command: start-dev
     image: quay.io/keycloak/keycloak
     # volumes: 
       # - ./RTLx:/opt/jboss/keycloak/themes/RTLx
