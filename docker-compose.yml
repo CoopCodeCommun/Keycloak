@@ -15,7 +15,7 @@ services:
   keycloak:
     depends_on:
       - postgres-kc
-    container_name: keycloak-rtlx-${MAJ_DATE}
+    container_name: keycloak
     environment:
       VIRTUAL_HOST: ${VIRTUAL_HOST}
       PROXY_ADDRESS_FORWARDING: "true" # <==== very important if you use reverse proxy
