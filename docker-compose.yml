@@ -33,7 +33,6 @@ services:
       KC_DB: postgres
       KC_DB_URL_DATABASE: ${POSTGRESQL_DB}
 
-    # command: start-dev
     image: quay.io/keycloak/keycloak
     # volumes: 
       # - ./RTLx:/opt/jboss/keycloak/themes/RTLx
@@ -46,8 +45,10 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=frontend
-      - traefik.http.routers.keycloack.tls.certresolver=myresolver
-      - traefik.http.routers.keycloack.rule=Host(`${VIRTUAL_HOST}`)
+      - traefik.http.routers.keycloak.tls.certresolver=myresolver
+      - traefik.http.routers.keycloak.rule=Host(`$VIRTUAL_HOST`)
+      - traefik.http.services.keycloak.loadbalancer.server.port=8080
+    # command: start-dev
       
 networks:
   frontend:
@@ -55,6 +56,4 @@ networks:
   local-keycloak:
     internal: true
 
-
-# https://www.linkedin.com/pulse/how-deploy-sso-keycloak-linux-server-docker-compose-ssl-temfack
-# https://keepgrowing.in/tools/keycloak-in-docker-3-how-to-customise-keycloak-themes/
+# https://www.keycloak.org/server/containers
