@@ -1,19 +1,60 @@
 services:
+  postgres-kc:
+    image: postgres:13
+    hostname: postgres-kc
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRESQL_DB}
+      POSTGRES_USER: ${POSTGRESQL_USER}
+      POSTGRES_PASSWORD: ${POSTGRESQL_PASS}
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    networks:
+      - local-keycloak
+
   keycloak:
-    image: quay.io/keycloak/keycloak:26.0.5
-    env_file: .env
-    ports:
-      - 8089:8080
+    depends_on:
+      - postgres-kc
+    container_name: keycloak-rtlx-${MAJ_DATE}
+    environment:
+      VIRTUAL_HOST: ${VIRTUAL_HOST}
+      PROXY_ADDRESS_FORWARDING: "true" # <==== very important if you use reverse proxy
+      KEYCLOAK_ADMIN: ${KC_BOOTSTRAP_ADMIN_USERNAME}
+      KEYCLOAK_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD}
+      KC_HOSTNAME_STRICT_HTTPS: "true"
+      KC_HOSTNAME: "${VIRTUAL_HOST}"
+      KC_PROXY: "edge"
+      KC_HOSTNAME_ADMIN_URL: "https://${VIRTUAL_HOST}"
+      QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: true
+      KC_DB_URL_HOST: kc-v23-db
+      #KC_DB_SCHEMA: public
+      KC_DB_USERNAME: ${POSTGRESQL_USER}
+      KC_DB_PASSWORD: ${POSTGRESQL_PASS}
+      KC_DB: postgres
+      KC_DB_URL_DATABASE: ${POSTGRESQL_DB}
+
+    command: start-dev
+    image: quay.io/keycloak/keycloak
+    # volumes: 
+      # - ./RTLx:/opt/jboss/keycloak/themes/RTLx
+      # - ./src/main/resources/theme/:/opt/keycloak/themes/ # https://github.com/p2-inc/keycloak-theme-template/tree/master
+      # - ./plugins/keycloak-restrict-client-auth.jar:/opt/keycloak/providers/keycloak-restrict-client-auth.jar      
+    restart: unless-stopped
+    networks:
+      - local-keycloak
+      - frontend
     labels:
       - traefik.enable=true
       - traefik.docker.network=frontend
-      - traefik.http.routers.keycloak.tls.certresolver=myresolver
-      - traefik.http.routers.keycloak.rule=Host(`$VIRTUAL_HOST`)
-      - traefik.http.services.keycloak.loadbalancer.server.port=8080
-    networks:
-      - frontend
-    command: start-dev
-
+      - traefik.http.routers.keycloack.tls.certresolver=myresolver
+      - traefik.http.routers.keycloack.rule=Host(`${VIRTUAL_HOST}`)
+      
 networks:
   frontend:
     external: true
+  local-keycloak:
+    internal: true
+
+
+# https://www.linkedin.com/pulse/how-deploy-sso-keycloak-linux-server-docker-compose-ssl-temfack
+# https://keepgrowing.in/tools/keycloak-in-docker-3-how-to-customise-keycloak-themes/
