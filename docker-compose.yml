@@ -46,7 +46,7 @@ services:
       - traefik.http.routers.keycloack.rule=Host(`${VIRTUAL_HOST}`)
       - traefik.http.routers.keycloack.entrypoints=entrypoints-https       
       - traefik.http.services.keycloack.loadbalancer.server.port=8080
-    command: "--hostname https://auth.lamiete.fr --proxy-headers xforwarded"
+    command: "start --hostname https://auth.lamiete.fr --proxy-headers xforwarded"
        
 networks:
   frontend:
