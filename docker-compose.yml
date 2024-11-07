@@ -33,8 +33,8 @@ services:
       KC_DB_USERNAME: ${POSTGRESQL_USER}
       KC_DB_PASSWORD: ${POSTGRESQL_PASS}
       KC_DB_URL_DATABASE: ${POSTGRESQL_DB}
-    volumes:    
-      - ./data/keycloak:/opt/keycloak/data
+    # volumes:    
+      # - ./data/keycloak:/opt/keycloak/data
     command: start
     restart: unless-stopped
     networks:
