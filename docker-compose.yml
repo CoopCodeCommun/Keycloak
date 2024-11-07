@@ -35,7 +35,6 @@ services:
       KC_DB_URL_DATABASE: ${POSTGRESQL_DB}
     # volumes:    
       # - ./data/keycloak:/opt/keycloak/data
-    command: start
     restart: unless-stopped
     networks:
       - local-keycloak
@@ -47,6 +46,7 @@ services:
       - traefik.http.routers.keycloack.rule=Host(`${VIRTUAL_HOST}`)
       - traefik.http.routers.keycloack.entrypoints=entrypoints-https       
       - traefik.http.services.keycloack.loadbalancer.server.port=8080
+    command: "start --hostname-strict false --proxy-headers forwarded"
        
 networks:
   frontend:
