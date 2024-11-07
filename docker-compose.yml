@@ -31,6 +31,7 @@ services:
       KC_DB_PASSWORD: ${POSTGRESQL_PASS}
       KC_DB: postgres
       KC_DB_URL_DATABASE: ${POSTGRESQL_DB}
+      QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: true
 
     image: quay.io/keycloak/keycloak
     # volumes: 
