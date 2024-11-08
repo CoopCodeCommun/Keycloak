@@ -46,6 +46,13 @@ services:
       - traefik.http.routers.keycloack.rule=Host(`${VIRTUAL_HOST}`)
       - traefik.http.routers.keycloack.entrypoints=entrypoints-https       
       - traefik.http.services.keycloack.loadbalancer.server.port=8080
+    
+    extra_hosts:
+      - ${VIRTUAL_HOST}:172.18.0.1
+      - nuage.${VIRTUAL_HOST}:172.18.0.1
+      - onlyoffice.${VIRTUAL_HOST}:172.18.0.1
+      - auth.${VIRTUAL_HOST}:172.18.0.1
+
     command: "start --hostname https://${VIRTUAL_HOST} --proxy-headers xforwarded"
        
 networks:
