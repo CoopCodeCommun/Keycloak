@@ -39,12 +39,12 @@ services:
     networks:
       - local-keycloak
       - frontend
-      labels:
-        - "traefik.enable=true"
-        - "traefik.docker.network=frontend"
-        - "traefik.http.routers.test_machine.tls.certresolver=myresolver"
-        - "traefik.http.routers.test_machine.rule=Host(`$VIRTUAL_HOST`)"
-        - "traefik.http.services.test_machine.loadbalancer.server.port=8080"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=frontend"
+      - "traefik.http.routers.test_machine.tls.certresolver=myresolver"
+      - "traefik.http.routers.test_machine.rule=Host(`$VIRTUAL_HOST`)"
+      - "traefik.http.services.test_machine.loadbalancer.server.port=8080"
 
     # Only if same serveur    
     extra_hosts:
