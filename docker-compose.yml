@@ -39,14 +39,14 @@ services:
     networks:
       - local-keycloak
       - frontend
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=frontend
-      - traefik.http.routers.keycloack.tls.certresolver=myresolver
-      - traefik.http.routers.keycloack.rule=Host(`${VIRTUAL_HOST}`)
-      - traefik.http.routers.keycloack.entrypoints=entrypoints-https       
-      - traefik.http.services.keycloack.loadbalancer.server.port=8080
-    
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=frontend"
+        - "traefik.http.routers.test_machine.tls.certresolver=myresolver"
+        - "traefik.http.routers.test_machine.rule=Host(`$VIRTUAL_HOST`)"
+        - "traefik.http.services.test_machine.loadbalancer.server.port=8080"
+
+    # Only if same serveur    
     extra_hosts:
       - ${VIRTUAL_HOST}:172.18.0.1
       - nuage.${VIRTUAL_HOST}:172.18.0.1
