@@ -35,6 +35,7 @@ services:
       KC_DB_URL_DATABASE: ${POSTGRESQL_DB}
     volumes:    
       - ./data/keycloak:/opt/keycloak/data
+      - ./src/main/resources/theme/:/opt/keycloak/themes/
     restart: unless-stopped
     networks:
       - local-keycloak
