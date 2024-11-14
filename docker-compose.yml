@@ -13,21 +13,20 @@ services:
     networks:
       - local-keycloak
 
-
   keycloak:
     depends_on:
       - keycloack-postgres
     container_name: keycloak
     image: quay.io/keycloak/keycloak:latest
     environment:
-      VIRTUAL_HOST: ${VIRTUAL_HOST}
-      PROXY_ADDRESS_FORWARDING: "true" # <==== very important if you use reverse proxy
-      KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME}
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME} # Cred' for temp admin user
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD}
-      KC_HOSTNAME_STRICT_HTTPS: "true"
-      KC_HOSTNAME: "${VIRTUAL_HOST}"
-      KC_PROXY: "edge"
       KC_HOSTNAME_ADMIN_URL: "https://${VIRTUAL_HOST}"
+      VIRTUAL_HOST: ${VIRTUAL_HOST}
+      KC_HOSTNAME: ${VIRTUAL_HOST}
+      PROXY_ADDRESS_FORWARDING: "true" # <==== very important if you use reverse proxy
+      KC_HOSTNAME_STRICT_HTTPS: "true"
+      KC_PROXY: "edge"
       KC_DB: postgres
       KC_DB_URL_HOST: keycloack-postgres
       KC_DB_USERNAME: ${POSTGRESQL_USER}
@@ -43,16 +42,9 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=frontend"
-      - "traefik.http.routers.test_machine.tls.certresolver=myresolver"
-      - "traefik.http.routers.test_machine.rule=Host(`$VIRTUAL_HOST`)"
-      - "traefik.http.services.test_machine.loadbalancer.server.port=8080"
-
-    # Only if same serveur    
-    extra_hosts:
-      - ${VIRTUAL_HOST}:172.18.0.1
-      - nuage.${VIRTUAL_HOST}:172.18.0.1
-      - onlyoffice.${VIRTUAL_HOST}:172.18.0.1
-      - auth.${VIRTUAL_HOST}:172.18.0.1
+      - "traefik.http.routers.keycloak.tls.certresolver=myresolver"
+      - "traefik.http.routers.keycloak.rule=Host(`$VIRTUAL_HOST`)"
+      - "traefik.http.services.keycloak.loadbalancer.server.port=8080"
 
     command: "start --hostname https://${VIRTUAL_HOST} --proxy-headers xforwarded"
        
