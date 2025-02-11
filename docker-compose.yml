@@ -17,7 +17,7 @@ services:
     depends_on:
       - keycloack-postgres
     container_name: keycloak
-    image: quay.io/keycloak/keycloak:latest
+    image: quay.io/keycloak/keycloak:26.0.7
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME} # Cred' for temp admin user
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD}
