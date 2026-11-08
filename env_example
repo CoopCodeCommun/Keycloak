@@ -1,6 +1,8 @@
 KC_BOOTSTRAP_ADMIN_USERNAME=admin
 KC_BOOTSTRAP_ADMIN_PASSWORD=changeme
-KEYCLOAK_VERSION=latest
+# Versions des images : exactes, changees seulement via make update (voir README)
+KEYCLOAK_VERSION=26.8.2
+POSTGRES_TAG=16
 PORT_KEYCLOAK=8080
 POSTGRESQL_USER=keycloak
 POSTGRESQL_DB=keycloak

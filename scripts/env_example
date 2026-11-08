@@ -1,0 +1,44 @@
+# Copier ce fichier en .env À CÔTÉ du script de sauvegarde, puis le remplir.
+#   cp env_example .env && chmod 600 .env && make init
+#
+# CONVENTION : les scripts ne contiennent AUCUN secret. Tout passe par ce
+# fichier, que git ignore. Un script est fait pour être copié, versionné,
+# partagé — une passphrase écrite dedans finit tôt ou tard dans un dépôt git.
+
+
+##### 1. QUE SAUVEGARDE-T-ON ? (à remplir à la main) #####
+
+# folder   : un dossier complet (Nextcloud, /home, un volume applicatif…)
+# postgres : une base (ou toutes) PostgreSQL
+# sqlite   : des bases SQLite (snapshot cohérent)
+BACKUP_TYPE=folder
+
+# --- BACKUP_TYPE=folder ---
+# Chemin absolu du dossier à sauvegarder.
+DUMPS_DIRECTORY=/var/lib/nextcloud
+
+# --- BACKUP_TYPE=postgres ---
+# Laisser PGDATABASE vide pour TOUTES les bases (pg_dumpall).
+# PGHOST=localhost
+# PGPORT=5432
+# PGUSER=postgres
+# PGPASSWORD=
+# PGDATABASE=
+
+# --- BACKUP_TYPE=sqlite ---
+# Dossier contenant les .db (défaut : <dossier du script>/data)
+# DATA_DIR=/var/lib/monapp/data
+
+
+##### 2. LE DÉPÔT BORG (écrit automatiquement par `make init`) #####
+
+# NE RIEN REMPLIR ICI. `make init` génère la clé SSH, crée le dépôt sur
+# borgwarehouse, tire une passphrase et te la fait mettre au coffre.
+# Laisser ces lignes commentées.
+#
+# BORG_PREFIX=       préfixe des archives, et nom de la clé SSH du dépôt
+# BORG_REPO=         adresse ssh:// du dépôt sur borgwarehouse
+# BORG_PASSPHRASE=   passphrase du dépôt — À METTRE AU COFFRE, avec la clé
+#                    exportée (borg key export) et l'identifiant du dépôt.
+#                    Sans elles, les archives sont définitivement illisibles.
+# AGE_MAX_HEURES=    âge max de la dernière archive avant que `make check` crie

@@ -1,6 +1,10 @@
 services:                           
   keycloack-postgres:
-    image: postgres:16
+    # Version : POSTGRES_TAG du .env (16 : suit les correctifs 16.x).
+    # -bookworm : la base a ete creee sous Debian 12 ; changer de Debian change
+    # la glibc, donc le tri du texte et la validite des index.
+    # Ne pas changer de majeure ici : dump / restauration obligatoire.
+    image: postgres:${POSTGRES_TAG:?POSTGRES_TAG doit etre renseigne dans .env}-bookworm
     container_name: keycloack-postgres
     hostname: keycloack-postgres
     restart: unless-stopped
@@ -17,16 +21,16 @@ services:
     depends_on:
       - keycloack-postgres
     container_name: keycloak
-    image: quay.io/keycloak/keycloak:26.0.7
+    # Version EXACTE : KEYCLOAK_VERSION du .env (ex. 26.0.7, jamais latest).
+    # La changer = migration de la base au demarrage : make update CONFIRME=1
+    # (sauvegarde + copie de la base + retour arriere automatique si KO).
+    image: quay.io/keycloak/keycloak:${KEYCLOAK_VERSION:?KEYCLOAK_VERSION doit etre renseigne dans .env}
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME} # Cred' for temp admin user
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD}
-      KC_HOSTNAME_ADMIN_URL: "https://${VIRTUAL_HOST}"
-      VIRTUAL_HOST: ${VIRTUAL_HOST}
-      KC_HOSTNAME: ${VIRTUAL_HOST}
-      PROXY_ADDRESS_FORWARDING: "true" # <==== very important if you use reverse proxy
-      KC_HOSTNAME_STRICT_HTTPS: "true"
-      KC_PROXY: "edge"
+      # Adresse publique et proxy : options de la ligne `command` (hostname v2).
+      # Les anciennes KC_HOSTNAME_ADMIN_URL, KC_HOSTNAME_STRICT_HTTPS, KC_PROXY,
+      # PROXY_ADDRESS_FORWARDING (hostname v1) sont retirees depuis Keycloak 25/26.
       KC_DB: postgres
       KC_DB_URL_HOST: keycloack-postgres
       KC_DB_USERNAME: ${POSTGRESQL_USER}
@@ -46,7 +50,10 @@ services:
       - "traefik.http.routers.keycloak.rule=Host(`$VIRTUAL_HOST`)"
       - "traefik.http.services.keycloak.loadbalancer.server.port=8080"
 
-    command: "start --hostname https://${VIRTUAL_HOST} --proxy-headers xforwarded"
+    # --proxy-headers=xforwarded : Traefik termine le TLS et transmet X-Forwarded-*
+    # --http-enabled=true        : Traefik parle en HTTP au port 8080 (remplace KC_PROXY=edge)
+    # --features-disabled=scim-api : API SCIM activee par defaut en 26.8, inutilisee ici
+    command: "start --hostname=https://${VIRTUAL_HOST} --proxy-headers=xforwarded --http-enabled=true --features-disabled=scim-api"
        
 networks:
   frontend:

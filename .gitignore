@@ -1,0 +1,15 @@
+# Secrets
+.env
+.env.*
+scripts/.env
+scripts/.ssh/
+
+# Donnees (sauvegardees par borg, pas par git)
+postgres_data/
+data/keycloak/*
+!data/keycloak/__init__
+
+# Fichiers de travail des scripts
+scripts/pg-dump-*/
+scripts/.backup-*.lock
+.snapshots/
