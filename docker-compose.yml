@@ -49,8 +49,8 @@ services:
       # LOGIN / LOGIN_ERROR par tentative, avec utilisateur, client et IP.
       # Les echecs sortent deja en warn ; les reussites sont en debug par
       # defaut (invisibles) : on les passe en info.
-      # A activer AUSSI dans chaque realm : Realm settings > Events >
-      # User events settings > Save events (listener jboss-logging).
+      # Listener jboss-logging : present par defaut dans chaque realm (verifier :
+      # README, Commandes utiles). Save events n'est PAS necessaire.
       KC_SPI_EVENTS_LISTENER__JBOSS_LOGGING__SUCCESS_LEVEL: info
     volumes:    
       - ./data/keycloak:/opt/keycloak/data

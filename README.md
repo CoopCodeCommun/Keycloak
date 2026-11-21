@@ -53,12 +53,19 @@ l'utilisateur :
 - Rotation des logs Docker sur chaque service (10 Mo × 3, ancre `x-logging`).
 - **Connexions** : chaque tentative (`type="LOGIN"`, `type="LOGIN_ERROR"`,
   avec realm, client, utilisateur et IP) sort sur la sortie de Keycloak, donc
-  dans la supervision. Deux réglages :
-  - dans le compose, `KC_SPI_EVENTS_LISTENER__JBOSS_LOGGING__SUCCESS_LEVEL=info`
-    (les réussites, sinon en `debug`, invisibles) ;
-  - **dans chaque realm**, une fois : console d'admin → Realm settings →
-    Events → User events settings → *Save events* activé, avec le listener
-    `jboss-logging` (onglet *Event listeners*). Sans ça, rien n'est journalisé.
+  dans la supervision. C'est le listener `jboss-logging`, présent par défaut
+  dans chaque realm (*Realm settings → Events → Event listeners*) ; les échecs
+  sortent en `warn`, les réussites en `info` grâce à
+  `KC_SPI_EVENTS_LISTENER__JBOSS_LOGGING__SUCCESS_LEVEL=info` (compose).
+  *Save events* n'est PAS nécessaire : il stocke en plus les événements dans la
+  base (qui grossit), la supervision les garde déjà.
+  Vérifier les listeners de chaque realm : voir « Commandes utiles » ci-dessous.
+
+Commandes utiles (dans le conteneur, mot de passe d'un admin du realm master demandé) :
+```bash
+docker exec -it keycloak /opt/keycloak/bin/kcadm.sh config credentials --server http://localhost:8080 --realm master --user <admin>
+docker exec keycloak sh -c 'for r in $(/opt/keycloak/bin/kcadm.sh get realms --fields realm --format csv --noquotes); do echo "$r : $(/opt/keycloak/bin/kcadm.sh get events/config -r $r --fields eventsListeners --format csv --noquotes)"; done'
+```
 
 ## Installation
 
