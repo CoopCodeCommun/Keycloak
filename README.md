@@ -48,6 +48,18 @@ l'utilisateur :
 
 ---
 
+## Logs et supervision
+
+- Rotation des logs Docker sur chaque service (10 Mo × 3, ancre `x-logging`).
+- **Connexions** : chaque tentative (`type="LOGIN"`, `type="LOGIN_ERROR"`,
+  avec realm, client, utilisateur et IP) sort sur la sortie de Keycloak, donc
+  dans la supervision. Deux réglages :
+  - dans le compose, `KC_SPI_EVENTS_LISTENER__JBOSS_LOGGING__SUCCESS_LEVEL=info`
+    (les réussites, sinon en `debug`, invisibles) ;
+  - **dans chaque realm**, une fois : console d'admin → Realm settings →
+    Events → User events settings → *Save events* activé, avec le listener
+    `jboss-logging` (onglet *Event listeners*). Sans ça, rien n'est journalisé.
+
 ## Installation
 
 ```bash

@@ -1,3 +1,11 @@
+# Rotation des logs Docker sur chaque service (sans elle, le json-file grossit
+# sans limite).
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:                           
   keycloack-postgres:
     # Version : POSTGRES_TAG du .env (16 : suit les correctifs 16.x).
@@ -14,6 +22,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRESQL_PASS}
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
+    logging: *logging
     networks:
       - local-keycloak
 
@@ -36,10 +45,18 @@ services:
       KC_DB_USERNAME: ${POSTGRESQL_USER}
       KC_DB_PASSWORD: ${POSTGRESQL_PASS}
       KC_DB_URL_DATABASE: ${POSTGRESQL_DB}
+      # Evenements de connexion dans les logs (donc dans la supervision) : un
+      # LOGIN / LOGIN_ERROR par tentative, avec utilisateur, client et IP.
+      # Les echecs sortent deja en warn ; les reussites sont en debug par
+      # defaut (invisibles) : on les passe en info.
+      # A activer AUSSI dans chaque realm : Realm settings > Events >
+      # User events settings > Save events (listener jboss-logging).
+      KC_SPI_EVENTS_LISTENER__JBOSS_LOGGING__SUCCESS_LEVEL: info
     volumes:    
       - ./data/keycloak:/opt/keycloak/data
       - ./src/main/resources/theme/:/opt/keycloak/themes/
     restart: unless-stopped
+    logging: *logging
     networks:
       - local-keycloak
       - frontend
